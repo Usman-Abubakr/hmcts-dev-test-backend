@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.dev.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.dev.dto.CreateTaskDTO;
 import uk.gov.hmcts.reform.dev.dto.TaskResponseDTO;
 import uk.gov.hmcts.reform.dev.exceptions.ResourceNotFoundException;
 import uk.gov.hmcts.reform.dev.models.Task;
@@ -30,6 +31,23 @@ public class TaskService {
         return taskRepository.findById(id)
             .map(this::toResponseDTO)
             .orElseThrow(() -> new ResourceNotFoundException("Task with ID " + id + " not found."));
+    }
+
+    public TaskResponseDTO saveTask(CreateTaskDTO dto) {
+        Task task = fromCreateDTO(dto);
+        Task savedTask = taskRepository.save(task);
+        return toResponseDTO(savedTask);
+    }
+
+    // --- Mapping Methods ---
+    private Task fromCreateDTO(CreateTaskDTO dto) {
+        Task task = new Task();
+        task.setCaseNumber(dto.getCaseNumber());
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(dto.getStatus());
+        task.setDueDate(dto.getDueDate());
+        return task;
     }
 
     private TaskResponseDTO toResponseDTO(Task task) {

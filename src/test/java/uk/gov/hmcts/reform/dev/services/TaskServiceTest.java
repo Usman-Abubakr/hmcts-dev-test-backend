@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.reform.dev.dto.CreateTaskDTO;
 import uk.gov.hmcts.reform.dev.dto.TaskResponseDTO;
 import uk.gov.hmcts.reform.dev.exceptions.ResourceNotFoundException;
 import uk.gov.hmcts.reform.dev.models.Task;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +39,23 @@ public class TaskServiceTest {
         assertEquals("Desc", result.getDescription());
         assertEquals("todo", result.getStatus());
         assertEquals("2025-02-05", result.getDueDate().toString());
+    }
 
+    @Test
+    public void testSaveTask() {
+        CreateTaskDTO dto = new CreateTaskDTO();
+        dto.setCaseNumber("CASE123");
+        dto.setTitle("New Task");
+        dto.setDescription("Something to do");
+        dto.setStatus("todo");
+        dto.setDueDate(LocalDate.now());
+
+        Task savedTask = new Task(1, dto.getCaseNumber(), dto.getTitle(), dto.getDescription(), dto.getStatus(), dto.getDueDate());
+        when(taskRepository.save(any(Task.class))).thenReturn(savedTask);
+
+        TaskResponseDTO result = taskService.saveTask(dto);
+
+        assertEquals("New Task", result.getTitle());
+        assertEquals("todo", result.getStatus());
     }
 }
