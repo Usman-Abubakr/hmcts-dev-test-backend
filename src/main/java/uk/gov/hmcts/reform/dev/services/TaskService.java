@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.dev.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.dev.dto.TaskResponseDTO;
+import uk.gov.hmcts.reform.dev.exceptions.ResourceNotFoundException;
 import uk.gov.hmcts.reform.dev.models.Task;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
 
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
+
     private final TaskRepository taskRepository;
 
     @Autowired
@@ -22,6 +24,12 @@ public class TaskService {
         return taskRepository.findAll().stream()
             .map(this::toResponseDTO)
             .collect(Collectors.toList());
+    }
+
+    public TaskResponseDTO getTaskById(Integer id) throws ResourceNotFoundException {
+        return taskRepository.findById(id)
+            .map(this::toResponseDTO)
+            .orElseThrow(() -> new ResourceNotFoundException("Task with ID " + id + " not found."));
     }
 
     private TaskResponseDTO toResponseDTO(Task task) {
