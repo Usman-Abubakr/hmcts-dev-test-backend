@@ -36,4 +36,10 @@ public class TaskController {
     public ResponseEntity<TaskResponseDTO> updateTask(@RequestBody UpdateTaskDTO updateTaskDTO) throws ResourceNotFoundException {
         return ResponseEntity.ok(taskService.updateTask(updateTaskDTO));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTaskById(@PathVariable int id) throws ResourceNotFoundException {
+        taskService.deleteTaskById(id);
+        return ResponseEntity.ok("Deleted task successfully");
+    }
 }

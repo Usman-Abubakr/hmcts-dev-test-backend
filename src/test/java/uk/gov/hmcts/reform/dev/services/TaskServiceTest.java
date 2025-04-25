@@ -18,8 +18,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TaskServiceTest {
@@ -93,11 +92,30 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testUpdateTaskThrowsWhenNotFound() {
+    public void givenTask_whenTaskNotExist_thenThrow () {
         UpdateTaskDTO dto = new UpdateTaskDTO();
         dto.setId(99);
         when(taskRepository.findById(99)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> taskService.updateTask(dto));
+    }
+
+    @Test
+    void givenId_whenTaskExist_thenDeleteTask() throws ResourceNotFoundException {
+        int taskId = 1;
+        when(taskRepository.existsById(taskId)).thenReturn(true);
+
+        taskService.deleteTaskById(taskId);
+
+        verify(taskRepository).deleteById(taskId);
+    }
+
+    @Test
+    void givenId_whenTaskNotExist_thenThrow() {
+        int taskId = 2;
+        when(taskRepository.existsById(taskId)).thenReturn(false);
+
+        assertThrows(ResourceNotFoundException.class, () -> taskService.deleteTaskById(taskId));
+        verify(taskRepository, never()).deleteById(any());
     }
 }

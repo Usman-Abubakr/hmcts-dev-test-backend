@@ -52,6 +52,13 @@ public class TaskService {
         return toResponseDTO(taskRepository.save(task));
     }
 
+    public void deleteTaskById(Integer id) throws ResourceNotFoundException {
+        if (!taskRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Task with ID " + id + " not found.");
+        }
+        taskRepository.deleteById(id);
+    }
+
     // --- Mapping Methods ---
     private Task fromCreateDTO(CreateTaskDTO dto) {
         Task task = new Task();
