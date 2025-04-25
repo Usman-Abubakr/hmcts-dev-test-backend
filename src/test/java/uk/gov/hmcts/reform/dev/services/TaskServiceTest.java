@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.dev.dto.CreateTaskDTO;
 import uk.gov.hmcts.reform.dev.dto.TaskResponseDTO;
+import uk.gov.hmcts.reform.dev.dto.UpdateTaskDTO;
 import uk.gov.hmcts.reform.dev.exceptions.ResourceNotFoundException;
 import uk.gov.hmcts.reform.dev.models.Task;
 import uk.gov.hmcts.reform.dev.repositories.TaskRepository;
@@ -15,7 +16,9 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,7 +31,7 @@ public class TaskServiceTest {
     private TaskRepository taskRepository;
 
     @Test
-    public void testGetTaskByIdReturnsTask() throws ResourceNotFoundException {
+    public void givenId_whenGetTaskById_thenReturnTask () throws ResourceNotFoundException {
         Task task = new Task(1, "CASE123", "Test Task", "Desc", "todo", LocalDate.of(2025, 2, 5));
         when(taskRepository.findById(1)).thenReturn(Optional.of(task));
 
@@ -42,7 +45,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testSaveTask() {
+    public void givenTask_whenSaveTask_thenReturnSavedTask () {
         CreateTaskDTO dto = new CreateTaskDTO();
         dto.setCaseNumber("CASE123");
         dto.setTitle("New Task");
@@ -57,5 +60,44 @@ public class TaskServiceTest {
 
         assertEquals("New Task", result.getTitle());
         assertEquals("todo", result.getStatus());
+    }
+
+    @Test
+    public void givenNewTitle_whenTaskExist_thenUpdateTitle() throws ResourceNotFoundException {
+        int taskId = 1;
+        Task existingTask = new Task(
+            taskId,
+            "CASE123",
+            "Old Title",
+            "Description",
+            "todo",
+            LocalDate.now());
+
+        UpdateTaskDTO updateDto = new UpdateTaskDTO(
+            taskId,
+            "New Title",
+            "Description",
+            "todo",
+            LocalDate.now()
+        );
+
+        when(taskRepository.findById(taskId)).thenReturn(Optional.of(existingTask));
+        when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        TaskResponseDTO result = taskService.updateTask(updateDto);
+
+        assertEquals("New Title", result.getTitle());
+        assertEquals(taskId, result.getId());
+
+        verify(taskRepository).save(existingTask);
+    }
+
+    @Test
+    public void testUpdateTaskThrowsWhenNotFound() {
+        UpdateTaskDTO dto = new UpdateTaskDTO();
+        dto.setId(99);
+        when(taskRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> taskService.updateTask(dto));
     }
 }

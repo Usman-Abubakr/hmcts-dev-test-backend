@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.dev.dto.CreateTaskDTO;
 import uk.gov.hmcts.reform.dev.dto.TaskResponseDTO;
+import uk.gov.hmcts.reform.dev.dto.UpdateTaskDTO;
 import uk.gov.hmcts.reform.dev.exceptions.ResourceNotFoundException;
 import uk.gov.hmcts.reform.dev.services.TaskService;
 
@@ -29,5 +30,10 @@ public class TaskController {
     @PostMapping
     public ResponseEntity<TaskResponseDTO> saveTask(@RequestBody CreateTaskDTO createTaskDTO) {
         return ResponseEntity.ok(taskService.saveTask(createTaskDTO));
+    }
+
+    @PutMapping
+    public ResponseEntity<TaskResponseDTO> updateTask(@RequestBody UpdateTaskDTO updateTaskDTO) throws ResourceNotFoundException {
+        return ResponseEntity.ok(taskService.updateTask(updateTaskDTO));
     }
 }
