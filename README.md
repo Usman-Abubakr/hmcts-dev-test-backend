@@ -1,10 +1,80 @@
 # HMCTS Dev Test Backend
-This will be the backend for the brand new HMCTS case management system. As a potential candidate we are leaving
-this in your hands. Please refer to the brief for the complete list of tasks! Complete as much as you can and be
-as creative as you want.
 
-You should be able to run `./gradlew build` to start with to ensure it builds successfully. Then from that you
-can run the service in IntelliJ (or your IDE of choice) or however you normally would.
+This is a simple Spring Boot application for task management, connected to a PostgreSQL database and fully containerized with Docker.
 
-There is an example endpoint provided to retrieve an example of a case. You are free to add/remove fields as you
-wish.
+---
+
+## Tech Stack
+
+- Java 21
+- Spring Boot 3
+- PostgreSQL 17
+- Gradle
+- Docker & Docker Compose
+- JUnit 5 & Mockito (for testing)
+
+---
+
+## How to Run
+
+### Docker:
+
+#### Prerequisites
+
+- Docker & Docker Compose
+
+#### Running with Docker Compose
+
+- `docker-compose up --build`
+- Accessible by default on `http://localhost:4000`
+- Ports and database details can be updated by editing `Dockerfile` and `docker-comepose.yml`
+
+
+### Local:
+
+#### Prerequisites
+
+- Java & Gradle for local development
+
+#### Build & Run
+
+- Run `./gradlew build` to build
+- Run `./gradlew bootRun` to run in terminal
+- Accessible by default on `http://localhost:4000`
+- Ports and database details can be updated by editing `.env`
+
+---
+
+## Endpoints
+
+- GET `/` : Welcome
+- GET `/tasks` : Read all tasks
+- GET `/tasks/:id` : Read Specific task
+- POST `/tasks` : Create task, `Task` body required without id (auto generated)
+- PUT `/tasks` : Update task, `Task` body required with id of desired task
+- DELETE `/:id` : Delete task
+
+### Schema
+
+```json
+{
+  "id": 1,
+  "caseNumber": "ABC123",
+  "title": "Title of task",
+  "description": "A description of the task",
+  "status": "to do",
+  "dueDate": "2025-04-27"
+}
+````
+
+---
+
+## Improvements
+
+Here are some features and improvements that could be made, which did make it due to time constrains and scope of project:
+
+- Authorisation
+- Complete testing
+- Data sanitisation
+
+
