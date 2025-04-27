@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.dev.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.hmcts.reform.dev.dto.CreateTaskDTO;
@@ -23,23 +24,42 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable int id) throws ResourceNotFoundException {
-        return ResponseEntity.ok(taskService.getTaskById(id));
+    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable int id) {
+        try {
+            TaskResponseDTO task = taskService.getTaskById(id);
+            return ResponseEntity.ok(task);
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PostMapping
     public ResponseEntity<TaskResponseDTO> saveTask(@RequestBody CreateTaskDTO createTaskDTO) {
-        return ResponseEntity.ok(taskService.saveTask(createTaskDTO));
+        try {
+            TaskResponseDTO createdTask = taskService.saveTask(createTaskDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @PutMapping
-    public ResponseEntity<TaskResponseDTO> updateTask(@RequestBody UpdateTaskDTO updateTaskDTO) throws ResourceNotFoundException {
-        return ResponseEntity.ok(taskService.updateTask(updateTaskDTO));
+    public ResponseEntity<TaskResponseDTO> updateTask(@RequestBody UpdateTaskDTO updateTaskDTO) {
+        try {
+            TaskResponseDTO updatedTask = taskService.updateTask(updateTaskDTO);
+            return ResponseEntity.ok(updatedTask);
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTaskById(@PathVariable int id) throws ResourceNotFoundException {
-        taskService.deleteTaskById(id);
-        return ResponseEntity.ok("Deleted task successfully");
+    public ResponseEntity<String> deleteTaskById(@PathVariable int id) {
+        try {
+            taskService.deleteTaskById(id);
+            return ResponseEntity.ok().body("Task deleted successfully");
+        } catch (ResourceNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
     }
 }
