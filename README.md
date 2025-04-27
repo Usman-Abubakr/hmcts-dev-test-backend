@@ -26,7 +26,7 @@ This is a simple Spring Boot application for task management, connected to a Pos
 #### Running with Docker Compose
 
 - `docker-compose up --build`
-- Accessible by default on `http://localhost:8080`
+- Accessible by default on `http://localhost:4000`
 - Ports and database details can be updated by editing `Dockerfile` and `docker-comepose.yml`
 
 
