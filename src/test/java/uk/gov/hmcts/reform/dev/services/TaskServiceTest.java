@@ -18,7 +18,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class TaskServiceTest {
@@ -30,7 +32,7 @@ public class TaskServiceTest {
     private TaskRepository taskRepository;
 
     @Test
-    public void givenId_whenGetTaskById_thenReturnTask () throws ResourceNotFoundException {
+    public void givenId_whenGetTaskById_thenReturnTask() throws ResourceNotFoundException {
         Task task = new Task(1, "CASE123", "Test Task", "Desc", "todo", LocalDate.of(2025, 2, 5));
         when(taskRepository.findById(1)).thenReturn(Optional.of(task));
 
@@ -44,7 +46,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void givenTask_whenSaveTask_thenReturnSavedTask () {
+    public void givenTask_whenSaveTask_thenReturnSavedTask() {
         CreateTaskDTO dto = new CreateTaskDTO();
         dto.setCaseNumber("CASE123");
         dto.setTitle("New Task");
@@ -52,7 +54,14 @@ public class TaskServiceTest {
         dto.setStatus("todo");
         dto.setDueDate(LocalDate.now());
 
-        Task savedTask = new Task(1, dto.getCaseNumber(), dto.getTitle(), dto.getDescription(), dto.getStatus(), dto.getDueDate());
+        Task savedTask = new Task(
+            1,
+            dto.getCaseNumber(),
+            dto.getTitle(),
+            dto.getDescription(),
+            dto.getStatus(),
+            dto.getDueDate()
+        );
         when(taskRepository.save(any(Task.class))).thenReturn(savedTask);
 
         TaskResponseDTO result = taskService.saveTask(dto);
@@ -70,7 +79,8 @@ public class TaskServiceTest {
             "Old Title",
             "Description",
             "todo",
-            LocalDate.now());
+            LocalDate.now()
+        );
 
         UpdateTaskDTO updateDto = new UpdateTaskDTO(
             taskId,
@@ -92,7 +102,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void givenTask_whenTaskNotExist_thenThrow () {
+    public void givenTask_whenTaskNotExist_thenThrow() {
         UpdateTaskDTO dto = new UpdateTaskDTO();
         dto.setId(99);
         when(taskRepository.findById(99)).thenReturn(Optional.empty());
