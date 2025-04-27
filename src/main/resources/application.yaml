@@ -21,7 +21,7 @@ springdoc:
 
 spring:
   config:
-    import: "optional:configtree:/mnt/secrets/test/"
+    import: "optional:configtree:/mnt/secrets/test/,optional:file:.env[.properties]"
   application:
     name: Dev Test
   datasource:
