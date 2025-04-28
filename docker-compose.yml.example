@@ -13,10 +13,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - backend
+      - hmcts-network
 
-  app:
-    build: .
+  backend:
+    build:
+      context: ./hmcts-dev-test-backend
     container_name: hmcts-dev-test-backend-app
     ports:
       - "4000:4000"
@@ -27,12 +28,28 @@ services:
     depends_on:
       - db
     networks:
+      - hmcts-network
+
+  frontend:
+    build:
+      context: ./hmcts-dev-test-frontend
+    container_name: hmcts-dev-test-frontend-app
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./hmcts-dev-test-frontend:/app
+      - /app/node_modules
+    command: yarn start:dev
+    environment:
+      SPRING_API_BASE_URL: http://backend:4000
+    depends_on:
       - backend
+    networks:
+      - hmcts-network
 
 volumes:
   postgres_data:
 
 networks:
-  backend:
-    external: true
-    name: hmcts-network
+  hmcts-network:
+    driver: bridge

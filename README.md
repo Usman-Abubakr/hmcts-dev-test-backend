@@ -23,12 +23,35 @@ This is a simple Spring Boot application for task management, connected to a Pos
 
 - Docker & Docker Compose
 
-#### Running with Docker Compose
+#### Running with Docker Compose (Backend only)
 
 - `docker-compose up --build`
 - Accessible by default on `http://localhost:4000`
 - Ports and database details can be updated by editing `Dockerfile` and `docker-comepose.yml`
 
+#### Running with Docker Compose (Backend + Frontend)
+
+1. Create a folder called `hmcts-dev-test` and clone this repository and the [backend](https://github.com/Usman-Abubakr/hmcts-dev-test-backend)
+2. In the new folder, create a new docker network with `docker network create hmcts-network`
+3. Copy `docker-compose.yml.example` from this project into the new folder and rename to `docker-compose.yml`
+4. Run `docker-compose up --build`, the project should be accessible on https://localhost:3100/
+
+- The Project structure should look similar like this:
+```
+hmcts-dev-test/
+│
+├── hmcts-dev-test-backend/
+│   ├── docker-compose.yml.example  ← (copy and rename this to `docker-compose.yml` into the root)
+│   ├── src/
+│   └── Dockerfile
+│
+├── hmcts-dev-test-frontend/
+│   ├── docker-compose.yml.example  ← (ignore if copied from backend project)
+│   ├── src/
+│   └── Dockerfile
+│
+└── docker-compose.yml  ← (new file here, after copying example)
+```
 
 ### Local:
 
@@ -76,5 +99,3 @@ Here are some features and improvements that could be made, which did make it du
 - Authorisation
 - Complete testing
 - Data sanitisation
-
-
