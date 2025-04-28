@@ -2,6 +2,8 @@
 
 This is a simple Spring Boot application for task management, connected to a PostgreSQL database and fully containerized with Docker.
 
+Live deployment using the Docker instructions: https://hmcts-dev-test.usman-a.dev
+
 ---
 
 ## Tech Stack
