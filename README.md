@@ -60,6 +60,7 @@ hmcts-dev-test/
 #### Prerequisites
 
 - Java & Gradle for local development
+- Postgress installed and database created: `createdb -U postgres hmcts_backend`
 
 #### Build & Run
 
